@@ -23,6 +23,19 @@ app.use(express.json());
 app.use("/api/user", userRouter); // <- home
 app.use("/api/auth", authRouter); // <-- sign up 
 
+app.use((err, req, res, next) => {// <-- error handle middleware function
+
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Internal Server Error';
+
+    return res.status(statusCode).json({
+      success: false,
+      statusCode: statusCode,
+      message : message
+    });
+
+});
+
 app.listen(port, () => {
   console.log(`connect to ${port}`);
 });
