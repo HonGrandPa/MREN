@@ -9,7 +9,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({
-      ...formData,
+      ...formData, // <-- previos obj
       [e.target.id]: e.target.value
     });
   };
