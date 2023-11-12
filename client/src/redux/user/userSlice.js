@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 //initial toy box is empty 
 const initialState = {
-    currentUser: null,
+    currentUser: null, //<-- this is going to store user infor ex password id email...
     error: null,
     isLoading: false,
 };
