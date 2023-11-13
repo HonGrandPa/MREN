@@ -1,7 +1,40 @@
+import User from "../models/user.model.js";
+import { errorHandler } from "../utils/error.js";
+import bcrypt from 'bcrypt'
+
 export const test = (req, res) => {
 
     res.json({
 
         message: "Hello world"
-    })
+    });
+};
+
+export const updateUser = async (req, res, next) => {
+
+    console.log(req.user)
+    if(req.user.id !== req.params.id) return next(errorHandler(401, 'You can only update your own account'));
+    try {
+        if(req.body.password) {
+            console.log("re-hash passowrd")
+            req.body.password = bcrypt.hashSync(req.body.password, 10);     
+        }
+        const updateUser = await User.findByIdAndUpdate(req.user.id, {    
+            $set: {
+                userName: req.body.userName,
+                email: req.body.email,
+                password: req.body.password,
+                avatar: req.body.avatar
+            }
+
+        }, {new: true})
+        if(!updateUser) return next(errorHandler(404, 'Cannot find the user'))
+        const {password:HaHaha, ...rest} = updateUser._doc
+        res.status(200).json(rest)
+    } catch (err) {
+
+        next(err);
+    }
+
 }
+
