@@ -14,6 +14,12 @@ const userSlice = createSlice({
     initialState,
     reducers: {
 
+        initial: (state) => {
+            state.currentUser = null;
+            state.error = null;
+            state.isLoading = false;
+        },
+
         signInStart: (state) => {
 
             state.isLoading = true;
@@ -46,11 +52,36 @@ const userSlice = createSlice({
             state.error = action.payload;
             state.isLoading = false
         },
+
+        deleteUserStart : (state) => {
+            state.isLoading = true;
+        },
+
+        deleteUserSuccess : (state) => {
+            state.isLoading = false;
+            state.currentUser = null;
+            state.error = null;
+        },
+
+        deleteUserFaulure : (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload
+        }
     }
 
 });
 
 //automatically generate these thress action 
-export const {signInStart, signInFailure, signInSuccess, updateUserFailure, updateUserSuccess, updateUserStart} = userSlice.actions;
+export const {
+    initial,
+    signInStart, 
+    signInFailure, 
+    signInSuccess, 
+    updateUserFailure, 
+    updateUserSuccess, 
+    updateUserStart, 
+    deleteUserFaulure,
+     deleteUserSuccess, 
+     deleteUserStart} = userSlice.actions;
 
 export default userSlice.reducer;
