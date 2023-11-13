@@ -47,7 +47,7 @@ export const deleteUser = async (req, res, next) => {
     try {
 
         await User.findByIdAndDelete(req.user.id);
-        res.clearCookie('access_token');
+        res.clearCookie('access_token'); //<---unauthurized the user
         res.status(200).json("User has been deleted");
 
     } catch (err) {

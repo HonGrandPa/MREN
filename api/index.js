@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import userRouter from "./routes/user.route.js"
 import authRouter from "./routes/auth.route.js"
 import cookieParser from "cookie-parser";
+import listingRouter from "./routes/listing.route.js"
 
 mongoose
   .connect(process.env.MONGO)
@@ -26,6 +27,8 @@ app.use(cookieParser());
 // "/api/user is a link and userRouter is exported from user.route with fun of "get""
 app.use("/api/user", userRouter); // <- home
 app.use("/api/auth", authRouter); // <-- sign up 
+app.use("/api/listing", listingRouter); // <-- sign up 
+
 
 app.use((err, req, res, next) => {// <-- error handle middleware function
 
