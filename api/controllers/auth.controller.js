@@ -108,5 +108,14 @@ export const google = async (req, res, next) => {
     console.log(`(Google) Error Occurred (Try): ${err}`);
     next(err); //<-- send it to err handle middleware
   }
+}
+
+export const signout = async (req, res, next) => {
+  try {
+    res.clearCookie('access_token');
+    res.status(200).json("User has been logged out")
+  } catch (err) {
+    next(err)
+  }
 
 }
