@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 
 
-
+//open the cookies 
 export const verifyUser = (req, res, next) => {
 
 const token = req.cookies.access_token;
@@ -19,7 +19,7 @@ jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return next(errorHandler(403, 'Forbidden'));
 
     req.user = user; //<--user from the cookie
-    next();
+    next(); //<--sned to next work which is controller 
 
 });
 
