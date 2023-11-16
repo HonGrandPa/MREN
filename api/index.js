@@ -18,13 +18,17 @@ mongoose
   });
 
 const app = express();
-const port = 3000;
+
 
 const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
+
+app.listen(3000, () => {
+  console.log(`connect to ${port}`);
+});
 
 // "/api/user is a link and userRouter is exported from user.route with fun of "get""
 app.use("/api/user", userRouter); // <- home
@@ -50,6 +54,4 @@ app.use((err, req, res, next) => {// <-- error handle middleware function
 
 });
 
-app.listen(port, () => {
-  console.log(`connect to ${port}`);
-});
+
