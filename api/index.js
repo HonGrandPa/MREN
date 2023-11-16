@@ -27,7 +27,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 
 app.listen(3000, () => {
-  console.log(`connect to ${port}`);
+  console.log(`connect`);
 });
 
 // "/api/user is a link and userRouter is exported from user.route with fun of "get""
