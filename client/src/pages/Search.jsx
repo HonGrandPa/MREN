@@ -1,66 +1,221 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Search = () => {
-  return (
-    <div className='flex flex-col md:flex-row'>
-      <div className='p-7 border-b-2 md:border-r-2 md:h-screen'>
-        <form className='flex flex-col gap-8'>
-        <div className='flex items-center gap-2'>
-            <label className='whitespace-nowrap'>Search Term:</label>
-            <input type="text"
-                id='searchTerm'
-                placeholder='Search...'
-                className='border rounded-lg p-3 w-full'
-            />
-        </div>
-        <div className='flex gap-2 flex-wrap items-center'>       
-            <label>Type:</label>
-            <div className='flex gap-2'>
-                <input type="checkbox" id="all" className='w-5'/>
-                <span>Rent & Sale</span>
-            </div>
-            <div className='flex gap-2'>
-                <input type="checkbox" id="rent" className='w-5'/>
-                <span>Rent</span>
-            </div>
-            <div className='flex gap-2'>
-                <input type="checkbox" id="sale" className='w-5'/>
-                <span>Sale</span>
-            </div>
-            <div className='flex gap-2'>
-                <input type="checkbox" id="offer" className='w-5'/>
-                <span>Offer</span>
-            </div>
-        </div>
-        <div className='flex gap-2 flex-wrap items-center'>       
-            <label>Amenities:</label>
-            <div className='flex gap-2'>
-                <input type="checkbox" id="parking" className='w-5'/>
-                <span>Parking</span>
-            </div>
-            <div className='flex gap-2'>
-                <input type="checkbox" id="furnished" className='w-5'/>
-                <span>Furnished</span>
-            </div>
-        </div>
-        <div className='flex items-center gap-2' >
-            <label>Sort:</label>
-            <select className='border rounded-lg p-3' id='sort_order'>
-                <option>Price high to low</option>
-                <option>Price low to high</option>
-                <option>Latest</option>
-                <option>Oldest</option>
-            </select>
-        </div>
-        <button className='uppercase bg-slate-700 p-3 rounded-lg text-white hover:opacity-95'>Search</button>
-        </form>
 
-      </div>
-      <div className=''>
-        <h1 className='text-3xl font-semibold border-b p-3 text-slate-700 mt-5'>Listing Resulte</h1>
-      </div>
-    </div>
-  )
+
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [listings, setListings] = useState([]);
+    const [showMore, setShowMore] = useState(false);
+    const [sidebardata, setSidebardata] = useState({
+
+        searchTerm: '',
+        type: 'all',
+        offer: false,
+        parking: false,
+        furnished: false,
+        sort: 'created_at', //<--regularPrice||createdAt...
+        order: 'desc' //desc||asc
+    });
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchTermFromUrl = urlParams.get('searchTerm');
+        const typeFromUrl = urlParams.get('type');
+        const parkingFromUrl = urlParams.get('parking');
+        const furnishedFromUrl = urlParams.get('furnished');
+        const offerFromUrl = urlParams.get('offer');
+        const sortFromUrl = urlParams.get('sort');
+        const orderFromUrl = urlParams.get('order');
+    
+        if (
+          searchTermFromUrl ||
+          typeFromUrl ||
+          parkingFromUrl ||
+          furnishedFromUrl ||
+          offerFromUrl ||
+          sortFromUrl ||
+          orderFromUrl
+        ) {
+          setSidebardata({
+            searchTerm: searchTermFromUrl || '',
+            type: typeFromUrl || 'all',
+            parking: parkingFromUrl === 'true' ? true : false,
+            furnished: furnishedFromUrl === 'true' ? true : false,
+            offer: offerFromUrl === 'true' ? true : false,
+            sort: sortFromUrl || 'created_at',
+            order: orderFromUrl || 'desc',
+          });
+        }
+
+        const fetchListings = async () => {
+            setLoading(true);
+            setShowMore(false);
+            const searchQuery = urlParams.toString();
+            const res = await fetch(`/api/listing/get?${searchQuery}`);
+            const data = await res.json();
+            console.log(data);
+            if (data.length > 8) {
+              setShowMore(true);
+            } else {
+              setShowMore(false);
+            }
+            setListings(data);
+            setLoading(false);
+          };
+      
+          fetchListings();
+
+
+
+      }, [window.location.search]);
+    
+
+
+    const handleChange = (e) => {
+
+        //  console.log(e.target.id);
+
+        if (e.target.id === 'all' || e.target.id === 'rent' || e.target.id === 'sell') {
+            setSidebardata({
+                ...sidebardata,
+                type: e.target.id
+            })
+        }
+
+        if (e.target.id === 'searchTerm') {
+            setSidebardata({ ...sidebardata, searchTerm: e.target.value })
+        }
+        if (e.target.id === 'parking' || e.target.id === 'furnished' || e.target.id === 'offer') {
+            setSidebardata({
+                ...sidebardata,
+                [e.target.id]: e.target.checked || e.target.checked === "true" ? true : false,
+            });
+        }
+        if (e.target.id === 'sort_order') {
+            const sort = e.target.value.split('_')[0] || 'created_at';
+            const order = e.target.value.split('_')[1] || 'desc';
+
+            setSidebardata({
+                ...sidebardata,
+                sort,
+                order
+            });
+        }
+    }
+
+    // console.log(sidebardata)
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('searchTerm', sidebardata.searchTerm);
+        urlParams.set('type', sidebardata.type);
+        urlParams.set('parking', sidebardata.parking);
+        urlParams.set('offer', sidebardata.offer);
+        urlParams.set('sort', sidebardata.sort);
+        urlParams.set('order', sidebardata.order);
+        const searchQuery = urlParams.toString();
+        navigate(`/search?${searchQuery}`);
+
+    }
+
+    return (
+        <div className='flex flex-col md:flex-row'>
+            <div className='p-7 border-b-2 md:border-r-2 md:h-screen'>
+                <form onSubmit={handleSubmit} className='flex flex-col gap-8'>
+                    <div className='flex items-center gap-2'>
+                        <label className='whitespace-nowrap'>Search Term:</label>
+                        <input type="text"
+                            id='searchTerm'
+                            placeholder='Search...'
+                            className='border rounded-lg p-3 w-full'
+                            value={setSidebardata.searchTerm}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className='flex gap-2 flex-wrap items-center'>
+                        <label>Type:</label>
+                        <div className='flex gap-2'>
+                            <input type="checkbox"
+                                id="all"
+                                className='w-5'
+                                onChange={handleChange}
+                                checked={sidebardata.type === 'all'}
+                            />
+                            <span>Rent & Sale</span>
+                        </div>
+                        <div className='flex gap-2'>
+                            <input type="checkbox"
+                                id="rent"
+                                className='w-5'
+                                onChange={handleChange}
+                                checked={sidebardata.type === 'rent'}
+                            />
+                            <span>Rent</span>
+                        </div>
+                        <div className='flex gap-2'>
+                            <input type="checkbox"
+                                id="sell"
+                                className='w-5'
+                                onChange={handleChange}
+                                checked={sidebardata.type === 'sell'}
+                            />
+                            <span>Sell</span>
+                        </div>
+                        <div className='flex gap-2'>
+                            <input type="checkbox"
+                                id="offer"
+                                className='w-5'
+                                onChange={handleChange}
+                                checked={sidebardata.offer === true}
+                            />
+                            <span>Offer</span>
+                        </div>
+                    </div>
+                    <div className='flex gap-2 flex-wrap items-center'>
+                        <label>Amenities:</label>
+                        <div className='flex gap-2'>
+                            <input type="checkbox"
+                                id="parking"
+                                className='w-5'
+                                onChange={handleChange}
+                                checked={sidebardata.parking === true}
+                            />
+                            <span>Parking</span>
+                        </div>
+                        <div className='flex gap-2'>
+                            <input type="checkbox"
+                                id="furnished"
+                                className='w-5'
+                                onChange={handleChange}
+                                checked={sidebardata.furnished === true}
+                            />
+                            <span>Furnished</span>
+                        </div>
+                    </div>
+                    <div className='flex items-center gap-2' >
+                        <label>Sort:</label>
+                        <select
+                            className='border rounded-lg p-3'
+                            id='sort_order'
+                            onChange={handleChange}
+                            defaultValue={'created_at_desc'}>
+                            <option value={'regularPrice_desc'}>Price high to low</option>
+                            <option value={'regularPrice_asc'}>Price low to high</option>
+                            <option value={'createdAt_desc'}>Latest</option>
+                            <option value={'createdAt_asc'}>Oldest</option>
+                        </select>
+                    </div>
+                    <button className='uppercase bg-slate-700 p-3 rounded-lg text-white hover:opacity-95'>Search</button>
+                </form>
+
+            </div>
+            <div className=''>
+                <h1 className='text-3xl font-semibold border-b p-3 text-slate-700 mt-5'>Listing Resulte</h1>
+            </div>
+        </div>
+    )
 }
 
 export default Search
