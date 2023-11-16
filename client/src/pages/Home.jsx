@@ -133,7 +133,7 @@ export default function Home() {
               </h2>
               <Link
                 className="text-sm text-blue-800 hover:underline"
-                to={"/search?type=sale"}
+                to={"/search?type=sell"}
               >
                 Show more places for sale
               </Link>
