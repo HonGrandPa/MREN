@@ -121,15 +121,16 @@ const Search = () => {
 
     }
 
+    //if we have 10 then it will show from 10th
     const onShowMoreClick = async () => {
         const numberOfListings = listings.length;
-        const startIndex = numberOfListings;
+        const startIndex = numberOfListings; // <- number of listing
         const urlParams = new URLSearchParams(location.search);
         urlParams.set('startIndex', startIndex);
         const searchQuery = urlParams.toString();
         const res = await fetch(`/api/listing/get?${searchQuery}`);
         const data = await res.json();
-        if (data.length < 9) {
+        if (data.length < 9) { // the limit we set from backend is 9 so...
           setShowMore(false);
         }
         setListings([...listings, ...data]);

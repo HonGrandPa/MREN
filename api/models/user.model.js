@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+
+
 const userSchema = new mongoose.Schema(
   {
     userName: {
@@ -18,7 +20,7 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Ffree-stickers%2Fcat&psig=AOvVaw2MCThuu6NHnxIGc5SFXZZk&ust=1699853067341000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCPDu26PcvYIDFQAAAAAdAAAAABAJ"
+      default: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
     },
   },
   {

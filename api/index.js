@@ -6,6 +6,7 @@ import userRouter from "./routes/user.route.js"
 import authRouter from "./routes/auth.route.js"
 import cookieParser from "cookie-parser";
 import listingRouter from "./routes/listing.route.js"
+import path from 'path';
 
 mongoose
   .connect(process.env.MONGO)
@@ -19,6 +20,7 @@ mongoose
 const app = express();
 const port = 3000;
 
+const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -29,6 +31,11 @@ app.use("/api/user", userRouter); // <- home
 app.use("/api/auth", authRouter); // <-- sign up 
 app.use("/api/listing", listingRouter); // <-- sign up 
 
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+})
 
 app.use((err, req, res, next) => {// <-- error handle middleware function
 
