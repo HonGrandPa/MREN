@@ -1,6 +1,6 @@
 {
   "engines": {
-    "node": "14.17.5"
+    "node": "20.8.1"
   },
   "name": "mern",
   "version": "1.0.0",
